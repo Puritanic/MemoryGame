@@ -215,6 +215,12 @@ function startGame() {
   hours = 0;
   startBtn.textContent = 'Restart Game';
 
+  document.getElementById('js-rating').innerHTML = `
+  <img class="rating__star" src="/images/star.svg" alt="rating">
+  <img class="rating__star" src="/images/star.svg" alt="rating">
+  <img class="rating__star" src="/images/star.svg" alt="rating">  
+  `;
+
   generateGrid(shuffledCards, grid);
   timer();
 }
