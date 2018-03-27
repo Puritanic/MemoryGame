@@ -1,5 +1,6 @@
 const grid = document.getElementById('js-grid');
 const startBtn = document.getElementById('js-start');
+const restartBtn = document.getElementById('js-restart');
 const modal = document.getElementById('js-modal');
 const closeBtn = document.getElementById('js-close');
 const movesDisplay = document.getElementById('js-moves');
@@ -39,6 +40,7 @@ let pairs = 8;
 // });
 
 startBtn.addEventListener('click', startGame);
+restartBtn.addEventListener('click', startGame);
 
 if (cardsToMatch.length === 2) {
   cardsToMatch = [];
@@ -230,6 +232,8 @@ function startGame() {
   <img class="rating__star" src="/images/star.svg" alt="rating">
   <img class="rating__star" src="/images/star.svg" alt="rating">  
   `;
+
+  restartBtn.style.display = 'block';
 
   generateGrid(shuffledCards, grid);
   timer();
