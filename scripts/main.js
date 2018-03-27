@@ -44,6 +44,11 @@ if (cardsToMatch.length === 2) {
   cardsToMatch = [];
 }
 
+/**
+ * Generates Grid with the cards
+ * @param {array} src
+ * @param {DOM Node} grid
+ */
 function generateGrid(src, grid) {
   src.map((image, index) => {
     var el = document.createElement('div');
@@ -64,6 +69,11 @@ function generateGrid(src, grid) {
   });
 }
 
+/**
+ * Handles click on the card
+ * @param {event} e
+ * @param {DOM element} clicked element
+ */
 function handleClick(e, el) {
   if (cardsToMatch.length === 2) {
     cardsToMatch = [];
@@ -78,6 +88,9 @@ function handleClick(e, el) {
   }
 }
 
+/**
+ * Increment moves variable during the game
+ */
 function incrementMoves() {
   moveCounter++;
   movesDisplay.textContent = `Moves: ${moveCounter}`;
@@ -94,11 +107,20 @@ function incrementMoves() {
   }
 }
 
+/**
+ * Check cardsToMatch array to see if two cards are the same
+ * @param {arr} arr
+ * @returns boolean
+ */
 function checkMatch(arr) {
   const [a, b] = arr;
   return a.data === b.data && !(a.id === b.id);
 }
 
+/**
+ * displays clicked card, and pushes it to cardsToMatch array
+ * @param {DOM Node} card
+ */
 function displayCard(el) {
   el.classList.add('active');
   const card = {
@@ -108,6 +130,11 @@ function displayCard(el) {
   cardsToMatch.push(card);
 }
 
+/**
+ * Activates when two cards are matched, controls styles
+ * decrements number of card pairs, and checks if there is card pairs left
+ * @param {any} arr
+ */
 function matched(arr) {
   const [a, b] = arr;
   document.getElementById(a.id).classList.add('matched');
@@ -115,13 +142,16 @@ function matched(arr) {
   document.getElementById(a.id).classList.remove('active');
   document.getElementById(b.id).classList.remove('active');
   pairs--;
-  console.log(a, b, pairs);
 
   if (pairs < 1) {
-    victory();
+    return victory();
   }
 }
 
+/**
+ * Activates once pairs variable decrements to zero
+ * Activates modal
+ */
 function victory() {
   clearTimeout(t);
 
@@ -139,6 +169,10 @@ function victory() {
   });
 }
 
+/**
+ * Resets active classes for unmatched cards
+ * @param {DOM Nodes} Card elements
+ */
 function resetClass(el) {
   el.childNodes.forEach(el => el.classList.remove('active'));
 }
@@ -164,6 +198,9 @@ function shuffle(array) {
   return array;
 }
 
+/**
+ * Starts new game
+ */
 function startGame() {
   clearTimeout(t);
 
@@ -183,7 +220,6 @@ function startGame() {
 }
 
 // Timer functionality
-
 function add() {
   seconds++;
   if (seconds >= 60) {
@@ -205,10 +241,17 @@ function add() {
   timer();
 }
 
+/**
+ * Starts timer
+ */
 function timer() {
   t = setTimeout(add, 1000);
 }
 
+/**
+ * Renders modal once the game is finished
+ * @returns string
+ */
 function renderModal() {
   return `
   <span id="js-close">&times;</span>
