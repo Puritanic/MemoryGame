@@ -81,10 +81,9 @@ function handleClick(e, el) {
   }
 
   displayCard(el);
-  incrementMoves();
 
   if (cardsToMatch.length === 2) {
-    checkMatch(cardsToMatch) ? matched(cardsToMatch) : null;
+    return checkMatch(cardsToMatch) ? matched(cardsToMatch) : null;
   }
 }
 
@@ -93,6 +92,7 @@ function handleClick(e, el) {
  */
 function incrementMoves() {
   moveCounter++;
+
   movesDisplay.textContent = `Moves: ${moveCounter}`;
   if (moveCounter > 40) {
     document.getElementById('js-rating').innerHTML = `
@@ -122,12 +122,22 @@ function checkMatch(arr) {
  * @param {DOM Node} card
  */
 function displayCard(el) {
-  el.classList.add('active');
   const card = {
     data: el.getAttribute('data-card'),
     id: el.id
   };
-  cardsToMatch.push(card);
+  // console.log(
+  //   cardsToMatch.some(c => c.id === card.id),
+  //   el.classList.contains('matched')
+  // );
+  if (
+    !cardsToMatch.some(c => c.id === card.id) &&
+    !el.classList.contains('matched')
+  ) {
+    el.classList.add('active');
+    cardsToMatch.push(card);
+    incrementMoves();
+  }
 }
 
 /**
@@ -174,7 +184,7 @@ function victory() {
  * @param {DOM Nodes} Card elements
  */
 function resetClass(el) {
-  el.childNodes.forEach(el => el.classList.remove('active'));
+  return el.childNodes.forEach(el => el.classList.remove('active'));
 }
 
 // https://stackoverflow.com/a/2450976/7453363
@@ -264,12 +274,12 @@ function renderModal() {
   <h1>
     <img class="star" src="images/star.svg" alt="star">
     ${
-      moveCounter < 40
+      moveCounter <= 40
         ? '<img class="star" style="margin-bottom: 15px;"  src="images/star.svg" alt="star">'
         : ''
     }
     ${
-      moveCounter < 50
+      moveCounter <= 50
         ? '<img class="star" src="images/star.svg" alt="star">'
         : ''
     }
