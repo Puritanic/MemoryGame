@@ -77,7 +77,10 @@ function generateGrid(src, grid) {
  * @param {DOM element} clicked element
  */
 function handleClick(e, el) {
-  if (cardsToMatch.length === 2) {
+  console.log(cardsToMatch);
+  console.log(pairs);
+
+  if (cardsToMatch.length === 2 && !cardsToMatch.some(c => c.id === el.id)) {
     cardsToMatch = [];
     resetClass(grid);
   }
@@ -149,14 +152,21 @@ function displayCard(el) {
  */
 function matched(arr) {
   const [a, b] = arr;
-  document.getElementById(a.id).classList.add('matched');
-  document.getElementById(b.id).classList.add('matched');
-  document.getElementById(a.id).classList.remove('active');
-  document.getElementById(b.id).classList.remove('active');
-  pairs--;
+  const first = document.getElementById(a.id);
+  const last = document.getElementById(b.id);
+  if (
+    !first.classList.contains('matched') &&
+    !last.classList.contains('matched')
+  ) {
+    first.classList.add('matched');
+    last.classList.add('matched');
+    first.classList.remove('active');
+    last.classList.remove('active');
+    pairs--;
 
-  if (pairs < 1) {
-    return victory();
+    if (pairs < 1) {
+      return victory();
+    }
   }
 }
 
@@ -171,9 +181,10 @@ function victory() {
   modal.innerHTML = renderModal();
 
   modal.addEventListener('click', function(event) {
+    console.log(event.target);
     if (event.target.id === 'js-close') {
       modal.classList.remove('active');
-    } else if (event.target.id === 'js-restart') {
+    } else if (event.target.id === 'js-modal-restart') {
       modal.classList.remove('active');
 
       startGame();
@@ -289,6 +300,6 @@ function renderModal() {
     }
   </h1>
   <h2>Your score: ${moveCounter} | Time: ${timerDisplay.textContent}</h2>
-  <button class="btn" id="js-restart">Start new game</button>
+  <button class="btn"> <img id="js-modal-restart" src="./images/restart.png" width="55px" height="auto" alt="Restart game" title="Restart game"></button>
   `;
 }
