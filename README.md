@@ -1,6 +1,6 @@
 # Memory Game
 
-> Project for the Udacity Front End Nanodegree programm
+> Project for the Udacity Front End Nanodegree program
 
 You can take a look at the game here: https://puritanic.github.io/MemoryGame/
 
