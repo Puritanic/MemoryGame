@@ -1,21 +1,33 @@
-const grid = document.getElementById('js-grid');
-const startBtn = document.getElementById('js-start');
-const restartBtn = document.getElementById('js-restart');
-const modal = document.getElementById('js-modal');
-const closeBtn = document.getElementById('js-close');
-const movesDisplay = document.getElementById('js-moves');
-const cardArr = ['css3', 'node', 'postcss', 'react', 'redux', 'gulp', 'sass', 'webpack'];
-const timerDisplay = document.getElementById('js-timer');
-const images = cardArr.concat(cardArr);
-
-let config = {
+let game = {
   seconds: 0,
   minutes: 0,
   hours: 0,
   timeout: null,
   moveCounter: 0,
   pairs: 8,
+  ui: {
+    grid: document.getElementById('js-grid'),
+    startBtn: document.getElementById('js-start'),
+    restartBtn: document.getElementById('js-restart'),
+    modal: document.getElementById('js-modal'),
+    closeBtn: document.getElementById('js-close'),
+    movesDisplay: document.getElementById('js-moves'),
+    timerDisplay: document.getElementById('js-timer')
+  },
+  cardArr: [
+    'css3',
+    'node',
+    'postcss',
+    'react',
+    'redux',
+    'gulp',
+    'sass',
+    'webpack'
+  ]
 };
+
+const images = game.cardArr.concat(game.cardArr);
+
 let cardsToMatch = [];
 
 // cards are an Array like object, and we cant use forEach directly on them, but we can use Array prototype call
@@ -26,8 +38,8 @@ let cardsToMatch = [];
 //   });
 // });
 
-startBtn.addEventListener('click', startGame);
-restartBtn.addEventListener('click', startGame);
+game.ui.startBtn.addEventListener('click', startGame);
+game.ui.restartBtn.addEventListener('click', startGame);
 
 if (cardsToMatch.length === 2) {
   cardsToMatch = [];
@@ -54,7 +66,7 @@ function generateGrid(src, grid) {
     `;
     el.addEventListener('click', handleClick.bind(null, event, el));
 
-    return grid.appendChild(el);
+    return game.ui.grid.appendChild(el);
   });
 }
 
@@ -66,7 +78,7 @@ function generateGrid(src, grid) {
 function handleClick(e, el) {
   if (cardsToMatch.length === 2 && !cardsToMatch.some(c => c.id === el.id)) {
     cardsToMatch = [];
-    resetClass(grid);
+    resetClass(game.ui.grid);
   }
 
   displayCard(el);
@@ -80,16 +92,16 @@ function handleClick(e, el) {
  * Increment moves variable during the game
  */
 function incrementMoves() {
-  config.moveCounter++;
+  game.moveCounter++;
 
-  movesDisplay.textContent = `Moves: ${config.moveCounter}`;
-  if (config.moveCounter > 40) {
+  game.ui.movesDisplay.textContent = `Moves: ${game.moveCounter}`;
+  if (game.moveCounter > 40) {
     document.getElementById('js-rating').innerHTML = `
     <img class="rating__star" src="/images/star.svg" alt="rating">
     <img class="rating__star" src="/images/star.svg" alt="rating">
     `;
   }
-  if (config.moveCounter > 50) {
+  if (game.moveCounter > 50) {
     document.getElementById('js-rating').innerHTML = `
     <img class="rating__star" src="/images/star.svg" alt="rating">
     `;
@@ -119,7 +131,8 @@ function displayCard(el) {
   //   cardsToMatch.some(c => c.id === card.id),
   //   el.classList.contains('matched')
   // );
-  if (!cardsToMatch.some(c => c.id === card.id) &&
+  if (
+    !cardsToMatch.some(c => c.id === card.id) &&
     !el.classList.contains('matched')
   ) {
     el.classList.add('active');
@@ -137,16 +150,17 @@ function matched(arr) {
   const [a, b] = arr;
   const first = document.getElementById(a.id);
   const last = document.getElementById(b.id);
-  if (!first.classList.contains('matched') &&
+  if (
+    !first.classList.contains('matched') &&
     !last.classList.contains('matched')
   ) {
     first.classList.add('matched');
     last.classList.add('matched');
     first.classList.remove('active');
     last.classList.remove('active');
-    config.pairs--;
+    game.pairs--;
 
-    if (config.pairs < 1) {
+    if (game.pairs < 1) {
       return victory();
     }
   }
@@ -157,16 +171,16 @@ function matched(arr) {
  * Activates modal
  */
 function victory() {
-  clearTimeout(config.timeout);
+  clearTimeout(game.timeout);
 
-  modal.classList.add('active');
-  modal.innerHTML = renderModal();
+  game.ui.modal.classList.add('active');
+  game.ui.modal.innerHTML = renderModal();
 
-  modal.addEventListener('click', function (event) {
+  game.ui.modal.addEventListener('click', function(event) {
     if (event.target.id === 'js-close') {
-      modal.classList.remove('active');
+      game.ui.modal.classList.remove('active');
     } else if (event.target.id === 'js-modal-restart') {
-      modal.classList.remove('active');
+      game.ui.modal.classList.remove('active');
 
       startGame();
     }
@@ -208,8 +222,8 @@ function shuffle(array) {
 function startGame() {
   const shuffledCards = shuffle(images);
 
-  clearTimeout(config.timeout);
-  resetConfig();
+  clearTimeout(game.timeout);
+  resetGame();
 
   document.getElementById('js-rating').innerHTML = `
   <img class="rating__star" src="./images/star.svg" alt="rating">
@@ -223,42 +237,43 @@ function startGame() {
 }
 
 /**
- * Resets game configuration
+ * Resets game config and UI
  */
-function resetConfig() {
-  config = {
-    seconds: 0,
-    minutes: 0,
-    hours: 0,
-    timeout: null,
-    moveCounter: 0,
-    pairs: 8,
-  }
-  grid.innerHTML = '';
-  movesDisplay.textContent = '0';
-  timerDisplay.textContent = '00:00:00';
-  startBtn.textContent = 'Restart Game';
-  modal.classList.remove('active');
+function resetGame() {
+  game.seconds = 0;
+  game.minutes = 0;
+  game.hours = 0;
+  game.timeout = null;
+  game.moveCounter = 0;
+  game.pairs = 8;
+
+  game.ui.grid.innerHTML = '';
+  game.ui.movesDisplay.textContent = '0';
+  game.ui.timerDisplay.textContent = '00:00:00';
+  game.ui.startBtn.textContent = 'Restart Game';
+  game.ui.modal.classList.remove('active');
 }
 
 // Timer functionality
 function add() {
-  config.seconds++;
-  if (config.seconds >= 60) {
-    config.seconds = 0;
-    config.minutes++;
-    if (config.minutes >= 60) {
-      config.minutes = 0;
-      config.hours++;
+  game.seconds++;
+  if (game.seconds >= 60) {
+    game.seconds = 0;
+    game.minutes++;
+    if (game.minutes >= 60) {
+      game.minutes = 0;
+      game.hours++;
     }
   }
 
-  timerDisplay.textContent =
-    (config.hours ? (config.hours > 9 ? config.hours : '0' + config.hours) : '00') +
+  game.ui.timerDisplay.textContent =
+    (game.hours ? (game.hours > 9 ? game.hours : '0' + game.hours) : '00') +
     ':' +
-    (config.minutes ? (config.minutes > 9 ? config.minutes : '0' + config.minutes) : '00') +
+    (game.minutes
+      ? game.minutes > 9 ? game.minutes : '0' + game.minutes
+      : '00') +
     ':' +
-    (config.seconds > 9 ? config.seconds : '0' + config.seconds);
+    (game.seconds > 9 ? game.seconds : '0' + game.seconds);
 
   timer();
 }
@@ -267,7 +282,7 @@ function add() {
  * Starts timer
  */
 function timer() {
-  config.timeout = setTimeout(add, 1000);
+  game.timeout = setTimeout(add, 1000);
 }
 
 /**
@@ -275,22 +290,24 @@ function timer() {
  * @returns string
  */
 function renderModal() {
+  const { moveCounter, ui: { timerDisplay: { textContent } } } = game;
+
   return `
   <span id="js-close">&times;</span>
   <h1>
     <img class="star" src="images/star.svg" alt="star">
     ${
-      config.moveCounter <= 40
+      moveCounter <= 40
         ? '<img class="star" style="margin-bottom: 15px;"  src="images/star.svg" alt="star">'
         : ''
     }
     ${
-      config.moveCounter <= 50
+      moveCounter <= 50
         ? '<img class="star" src="images/star.svg" alt="star">'
         : ''
     }
   </h1>
-  <h2>Your score: ${config.moveCounter} | Time: ${timerDisplay.textContent}</h2>
+  <h2>Your score: ${moveCounter} | Time: ${textContent}</h2>
   <button class="btn"> <img id="js-modal-restart" src="./images/restart.png" width="55px" height="auto" alt="Restart game" title="Restart game"></button>
   `;
 }
