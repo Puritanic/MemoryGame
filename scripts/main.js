@@ -232,7 +232,7 @@ function startGame() {
   `;
   game.ui.restartBtn.style.display = 'block';
 
-  generateGrid(shuffledCards, grid);
+  generateGrid(shuffledCards, game.ui.grid);
   timer();
 }
 
