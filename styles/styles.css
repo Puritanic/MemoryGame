@@ -236,6 +236,12 @@ header h1 {
   display: flex;
 }
 
+.modal__stars {
+  color: #f1db51;
+  margin: 0;
+  padding: 0;
+}
+
 #js-close {
   display: block;
   position: relative;

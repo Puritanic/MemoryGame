@@ -64,7 +64,7 @@ function generateGrid(src, grid) {
         <img src="./images/${image}.svg" alt="game card">
       </div>
     `;
-    el.addEventListener('click', handleClick.bind(null, event, el));
+    el.addEventListener('click', handleClick.bind(null, (event = {}), el));
 
     return game.ui.grid.appendChild(el);
   });
@@ -97,13 +97,13 @@ function incrementMoves() {
   game.ui.movesDisplay.textContent = `Moves: ${game.moveCounter}`;
   if (game.moveCounter > 40) {
     document.getElementById('js-rating').innerHTML = `
-    <img class="rating__star" src="/images/star.svg" alt="rating">
-    <img class="rating__star" src="/images/star.svg" alt="rating">
+    <i class="fas fa-star fa-2x"></i>
+    <i class="fas fa-star fa-2x"></i>
     `;
   }
   if (game.moveCounter > 50) {
     document.getElementById('js-rating').innerHTML = `
-    <img class="rating__star" src="/images/star.svg" alt="rating">
+    <i class="fas fa-star fa-2x"></i>
     `;
   }
 }
@@ -226,9 +226,9 @@ function startGame() {
   resetGame();
 
   document.getElementById('js-rating').innerHTML = `
-  <img class="rating__star" src="./images/star.svg" alt="rating">
-  <img class="rating__star" src="./images/star.svg" alt="rating">
-  <img class="rating__star" src="./images/star.svg" alt="rating">  
+  <i class="fas fa-star fa-2x"></i>
+  <i class="fas fa-star fa-2x"></i>
+  <i class="fas fa-star fa-2x"></i>
   `;
   game.ui.restartBtn.style.display = 'block';
 
@@ -294,18 +294,10 @@ function renderModal() {
 
   return `
   <span id="js-close">&times;</span>
-  <h1>
-    <img class="star" src="images/star.svg" alt="star">
-    ${
-      moveCounter <= 40
-        ? '<img class="star" style="margin-bottom: 15px;"  src="images/star.svg" alt="star">'
-        : ''
-    }
-    ${
-      moveCounter <= 50
-        ? '<img class="star" src="images/star.svg" alt="star">'
-        : ''
-    }
+  <h1 class="modal__stars">
+  <i class="fas fa-star fa-3x"></i>
+    ${moveCounter <= 40 ? '<i class="fas fa-star fa-5x"></i>' : ''}
+    ${moveCounter <= 50 ? '<i class="fas fa-star fa-3x"></i>' : ''}
   </h1>
   <h2>Your score: ${moveCounter} | Time: ${textContent}</h2>
   <button class="btn"> <img id="js-modal-restart" src="./images/restart.png" width="55px" height="auto" alt="Restart game" title="Restart game"></button>
