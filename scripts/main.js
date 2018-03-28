@@ -4,32 +4,19 @@ const restartBtn = document.getElementById('js-restart');
 const modal = document.getElementById('js-modal');
 const closeBtn = document.getElementById('js-close');
 const movesDisplay = document.getElementById('js-moves');
-const images = [
-  'css3',
-  'gulp',
-  'node',
-  'postcss',
-  'react',
-  'redux',
-  'gulp',
-  'sass',
-  'webpack',
-  'css3',
-  'node',
-  'postcss',
-  'react',
-  'redux',
-  'sass',
-  'webpack'
-];
-let timerDisplay = document.getElementById('js-timer');
-let seconds = 0;
-let minutes = 0;
-let hours = 0;
-let t;
+const cardArr = ['css3', 'node', 'postcss', 'react', 'redux', 'gulp', 'sass', 'webpack'];
+const timerDisplay = document.getElementById('js-timer');
+const images = cardArr.concat(cardArr);
+
+let config = {
+  seconds: 0,
+  minutes: 0,
+  hours: 0,
+  timeout: null,
+  moveCounter: 0,
+  pairs: 8,
+};
 let cardsToMatch = [];
-let moveCounter = 0;
-let pairs = 8;
 
 // cards are an Array like object, and we cant use forEach directly on them, but we can use Array prototype call
 // useful snippet
@@ -77,9 +64,6 @@ function generateGrid(src, grid) {
  * @param {DOM element} clicked element
  */
 function handleClick(e, el) {
-  console.log(cardsToMatch);
-  console.log(pairs);
-
   if (cardsToMatch.length === 2 && !cardsToMatch.some(c => c.id === el.id)) {
     cardsToMatch = [];
     resetClass(grid);
@@ -96,16 +80,16 @@ function handleClick(e, el) {
  * Increment moves variable during the game
  */
 function incrementMoves() {
-  moveCounter++;
+  config.moveCounter++;
 
-  movesDisplay.textContent = `Moves: ${moveCounter}`;
-  if (moveCounter > 40) {
+  movesDisplay.textContent = `Moves: ${config.moveCounter}`;
+  if (config.moveCounter > 40) {
     document.getElementById('js-rating').innerHTML = `
     <img class="rating__star" src="/images/star.svg" alt="rating">
     <img class="rating__star" src="/images/star.svg" alt="rating">
     `;
   }
-  if (moveCounter > 50) {
+  if (config.moveCounter > 50) {
     document.getElementById('js-rating').innerHTML = `
     <img class="rating__star" src="/images/star.svg" alt="rating">
     `;
@@ -135,8 +119,7 @@ function displayCard(el) {
   //   cardsToMatch.some(c => c.id === card.id),
   //   el.classList.contains('matched')
   // );
-  if (
-    !cardsToMatch.some(c => c.id === card.id) &&
+  if (!cardsToMatch.some(c => c.id === card.id) &&
     !el.classList.contains('matched')
   ) {
     el.classList.add('active');
@@ -154,17 +137,16 @@ function matched(arr) {
   const [a, b] = arr;
   const first = document.getElementById(a.id);
   const last = document.getElementById(b.id);
-  if (
-    !first.classList.contains('matched') &&
+  if (!first.classList.contains('matched') &&
     !last.classList.contains('matched')
   ) {
     first.classList.add('matched');
     last.classList.add('matched');
     first.classList.remove('active');
     last.classList.remove('active');
-    pairs--;
+    config.pairs--;
 
-    if (pairs < 1) {
+    if (config.pairs < 1) {
       return victory();
     }
   }
@@ -175,13 +157,12 @@ function matched(arr) {
  * Activates modal
  */
 function victory() {
-  clearTimeout(t);
+  clearTimeout(config.timeout);
 
   modal.classList.add('active');
   modal.innerHTML = renderModal();
 
-  modal.addEventListener('click', function(event) {
-    console.log(event.target);
+  modal.addEventListener('click', function (event) {
     if (event.target.id === 'js-close') {
       modal.classList.remove('active');
     } else if (event.target.id === 'js-modal-restart') {
@@ -225,49 +206,59 @@ function shuffle(array) {
  * Starts new game
  */
 function startGame() {
-  clearTimeout(t);
-
   const shuffledCards = shuffle(images);
-  moveCounter = 0;
-  pairs = 8;
-  grid.innerHTML = '';
-  movesDisplay.textContent = '0';
-  timerDisplay.textContent = '00:00:00';
-  seconds = 0;
-  minutes = 0;
-  hours = 0;
-  startBtn.textContent = 'Restart Game';
+
+  clearTimeout(config.timeout);
+  resetConfig();
 
   document.getElementById('js-rating').innerHTML = `
-  <img class="rating__star" src="/images/star.svg" alt="rating">
-  <img class="rating__star" src="/images/star.svg" alt="rating">
-  <img class="rating__star" src="/images/star.svg" alt="rating">  
+  <img class="rating__star" src="./images/star.svg" alt="rating">
+  <img class="rating__star" src="./images/star.svg" alt="rating">
+  <img class="rating__star" src="./images/star.svg" alt="rating">  
   `;
-
   restartBtn.style.display = 'block';
 
   generateGrid(shuffledCards, grid);
   timer();
 }
 
+/**
+ * Resets game configuration
+ */
+function resetConfig() {
+  config = {
+    seconds: 0,
+    minutes: 0,
+    hours: 0,
+    timeout: null,
+    moveCounter: 0,
+    pairs: 8,
+  }
+  grid.innerHTML = '';
+  movesDisplay.textContent = '0';
+  timerDisplay.textContent = '00:00:00';
+  startBtn.textContent = 'Restart Game';
+  modal.classList.remove('active');
+}
+
 // Timer functionality
 function add() {
-  seconds++;
-  if (seconds >= 60) {
-    seconds = 0;
-    minutes++;
-    if (minutes >= 60) {
-      minutes = 0;
-      hours++;
+  config.seconds++;
+  if (config.seconds >= 60) {
+    config.seconds = 0;
+    config.minutes++;
+    if (config.minutes >= 60) {
+      config.minutes = 0;
+      config.hours++;
     }
   }
 
   timerDisplay.textContent =
-    (hours ? (hours > 9 ? hours : '0' + hours) : '00') +
+    (config.hours ? (config.hours > 9 ? config.hours : '0' + config.hours) : '00') +
     ':' +
-    (minutes ? (minutes > 9 ? minutes : '0' + minutes) : '00') +
+    (config.minutes ? (config.minutes > 9 ? config.minutes : '0' + config.minutes) : '00') +
     ':' +
-    (seconds > 9 ? seconds : '0' + seconds);
+    (config.seconds > 9 ? config.seconds : '0' + config.seconds);
 
   timer();
 }
@@ -276,7 +267,7 @@ function add() {
  * Starts timer
  */
 function timer() {
-  t = setTimeout(add, 1000);
+  config.timeout = setTimeout(add, 1000);
 }
 
 /**
@@ -289,17 +280,17 @@ function renderModal() {
   <h1>
     <img class="star" src="images/star.svg" alt="star">
     ${
-      moveCounter <= 40
+      config.moveCounter <= 40
         ? '<img class="star" style="margin-bottom: 15px;"  src="images/star.svg" alt="star">'
         : ''
     }
     ${
-      moveCounter <= 50
+      config.moveCounter <= 50
         ? '<img class="star" src="images/star.svg" alt="star">'
         : ''
     }
   </h1>
-  <h2>Your score: ${moveCounter} | Time: ${timerDisplay.textContent}</h2>
+  <h2>Your score: ${config.moveCounter} | Time: ${timerDisplay.textContent}</h2>
   <button class="btn"> <img id="js-modal-restart" src="./images/restart.png" width="55px" height="auto" alt="Restart game" title="Restart game"></button>
   `;
 }
