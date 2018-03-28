@@ -179,7 +179,10 @@ function victory() {
   game.ui.modal.addEventListener('click', function(event) {
     if (event.target.id === 'js-close') {
       game.ui.modal.classList.remove('active');
-    } else if (event.target.id === 'js-modal-restart') {
+    } else if (
+      event.target.id === 'js-modal-restart' ||
+      event.target.id === 'js-modal-restart-btn'
+    ) {
       game.ui.modal.classList.remove('active');
 
       startGame();
@@ -300,6 +303,6 @@ function renderModal() {
     ${moveCounter <= 50 ? '<i class="fas fa-star fa-3x"></i>' : ''}
   </h1>
   <h2>Your score: ${moveCounter} | Time: ${textContent}</h2>
-  <button class="btn"> <img id="js-modal-restart" src="./images/restart.png" width="55px" height="auto" alt="Restart game" title="Restart game"></button>
+  <button class="btn" id="js-modal-restart-btn"> <img id="js-modal-restart" src="./images/restart.png" width="55px" height="auto" alt="Restart game" title="Restart game"></button>
   `;
 }
