@@ -230,7 +230,7 @@ function startGame() {
   <img class="rating__star" src="./images/star.svg" alt="rating">
   <img class="rating__star" src="./images/star.svg" alt="rating">  
   `;
-  restartBtn.style.display = 'block';
+  game.ui.restartBtn.style.display = 'block';
 
   generateGrid(shuffledCards, grid);
   timer();
