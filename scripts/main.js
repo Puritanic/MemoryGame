@@ -52,7 +52,7 @@ if (cardsToMatch.length === 2) {
  */
 function generateGrid(src, grid) {
   src.map((image, index) => {
-    var el = document.createElement('div');
+    let el = document.createElement('div');
     el.classList.add('card');
     el.id = `js-${image}-${index}`;
     el.setAttribute('data-card', image);
